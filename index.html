@@ -586,6 +586,40 @@
       makeEngines();
     })();
 
+    let times;
+    (async () => {
+      times = await get('times.json');
+
+      const rtf = new Intl.RelativeTimeFormat("en", {
+        localeMatcher: 'best fit',
+        numeric: 'auto',
+        style: 'long'
+      });
+
+      const prettyTime = (timestamp, factor = 1) => {
+        const intervals = [
+          { label: 'year', seconds: 31536000 },
+          { label: 'month', seconds: 2592000 },
+          { label: 'week', seconds: 604800 },
+          { label: 'day', seconds: 86400 },
+          { label: 'hour', seconds: 3600 },
+          { label: 'minute', seconds: 60 },
+          { label: 'second', seconds: 1 }
+        ];
+
+        const seconds = Math.floor((timestamp) / 1000);
+        const interval = intervals.find(i => i.seconds <= seconds) ?? intervals[intervals.length - 1];
+        const count = Math.floor(seconds / interval.seconds);
+
+        return rtf.format(count * factor, interval.label);
+      };
+
+      generated_ago.textContent = prettyTime(Date.now() - new Date(times.generatedAt), -1);
+
+      const worstTime = Math.max(...Object.values(times.timeTaken));
+      generated_in.textContent = prettyTime(new Date(times.generatedAt - times.beganAt)).replace('in', ', took');
+    })();
+
     let test262;
     (async () => {
       test262 = await get('test262.json');
