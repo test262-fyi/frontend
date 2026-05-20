@@ -14,7 +14,7 @@
   <div id="sidebar">
     <div id="sidebar-contents">
       <h1 onclick="navigate('')">test262.fyi</h1>
-      <h2>daily runner of <a target="_blank" href="https://github.com/tc39/test262">test262</a> for <i>many</i> engines<br>✨ v2 beta! <a target="_blank" href="https://github.com/test262-fyi/test262.fyi/issues/98">click here for more info</a></h2>
+      <h2>daily runner of <a target="_blank" href="https://github.com/tc39/test262">test262</a> for <i>many</i> engines<br>✨ v<i>3</i> beta! <a target="_blank" href="https://github.com/test262-fyi/data/issues/121">click here for more info</a></h2>
 
       <hr>
 
@@ -27,7 +27,7 @@
       <footer>
         test262 revision <a href="" id="test262_rev"></a><br><br>
         generated <span id="generated_ago"></span><span id="generated_in"></span><br>
-        on Ubuntu 25.04 aarch64 (64K) with Ampere M128-30
+        <span id="generated_system"></span>
       </footer>
     </div>
   </div>
@@ -257,7 +257,7 @@
       return [ container, checkbox ];
     };
 
-    let features, editions, cache = {};
+    let meta, engines, times, test262, features, editions, cache = {};
     const navigate = async (path) => {
       cwd = path.trim();
       updateHash(true);
@@ -284,8 +284,6 @@
 
       if (cwd === '') {
         setTimeout(async () => {
-          if (!features) features = await get('features.json');
-
           const proposalsDetails = document.createElement('details');
           proposalsDetails.open = true;
 
@@ -326,9 +324,6 @@
             el.append(info, makeGraph({ total, engines }, true));
             proposalsEl.append(el);
           }
-
-          if (!editions) editions = await get('editions.json');
-
           const editionsDetails = document.createElement('details');
           editionsDetails.open = true;
 
@@ -580,16 +575,7 @@
       el.append(container);
     };
 
-    let engines;
-    (async () => {
-      engines = await get('engines.json');
-      makeEngines();
-    })();
-
-    let times;
-    (async () => {
-      times = await get('times.json');
-
+    const updateFooter = () => {
       const rtf = new Intl.RelativeTimeFormat("en", {
         localeMatcher: 'best fit',
         numeric: 'auto',
@@ -618,15 +604,23 @@
 
       const worstTime = Math.max(...Object.values(times.timeTaken));
       generated_in.textContent = prettyTime(new Date(times.generatedAt - times.beganAt)).replace('in', ', took');
-    })();
-
-    let test262;
-    (async () => {
-      test262 = await get('test262.json');
+      generated_system.textContent = times.system ? `on ${times.system}` : '';
       test262_rev.textContent = test262.revision.slice(0, 7);
       test262_rev.href = 'https://github.com/tc39/test262/commit/' + test262.revision;
+    };
+
+    (async () => {
+      meta = await get('meta.json');
+      engines = meta.engines;
+      times = meta.times;
+      test262 = meta.test262;
+      features = meta.features;
+      editions = meta.editions;
+
+      makeEngines();
+      updateFooter();
+      navigate(cwd);
     })();
-    navigate(cwd);
   </script>
 </body>
 </html>
