@@ -602,8 +602,8 @@
 
       generated_ago.textContent = prettyTime(Date.now() - new Date(times.generatedAt), -1);
 
-      const worstTime = Math.max(...Object.values(times.timeTaken));
-      generated_in.textContent = prettyTime(new Date(times.generatedAt - times.beganAt)).replace('in', ', took');
+      const totalTime = Object.values(times.timeTaken).reduce((sum, time) => sum + time, 0);
+      generated_in.textContent = prettyTime(totalTime).replace('in', ', took');
       generated_system.textContent = times.system ? `on ${times.system}` : '';
       test262_rev.textContent = test262.revision.slice(0, 7);
       test262_rev.href = 'https://github.com/tc39/test262/commit/' + test262.revision;
