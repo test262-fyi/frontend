@@ -489,12 +489,12 @@ a {
 }
 
 @media (max-width: 1000px) {
-  #proposals {
+  #proposals, #editions {
     grid-template-columns: 1fr;
   }
 
   #proposals > div, #editions > div {
-    width: calc((100vw - 320px - 4vw) / 1 - 24px);
+    width: 100%;
   }
 }
 
