@@ -550,3 +550,30 @@ summary input {
 #sidebar details[open] summary:after {
   content: " ▼";
 }
+
+@media (max-width: 800px) {
+  body {
+    display: block;
+  }
+
+  #sidebar {
+    position: static;
+    height: auto;
+  }
+
+  #sidebar-contents {
+    min-height: 0;
+  }
+
+  #table-options {
+    flex-wrap: wrap;
+  }
+
+  table .stats {
+    width: calc((100vw - 4vw) * 0.75 - 12px - 2px);
+  }
+
+  thead .stats {
+    width: calc(100vw - 4vw - 19px);
+  }
+}
